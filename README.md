@@ -149,28 +149,8 @@ git clone https://github.com/seu-usuario/CounterDatabase.git
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## Roadmap
 
-### Funcionalidades Futuras
-- [ ] Sistema de crates
-- [ ] Catálogo de agents
-- [ ] Filtros avançados por raridade, categoria, etc.
-- [ ] Favoritos e listas personalizadas
-- [ ] Modo offline com cache local
-- [ ] Notificações de preços de mercado
-- [ ] Integração com APIs de preços
-
-### Melhorias Técnicas
-- [ ] Implementação de testes unitários
-- [ ] Injeção de dependência com Hilt
-- [ ] Navigation Component
-- [ ] Room Database para cache local
-- [ ] Tratamento robusto de erros
-- [ ] Loading states e feedback visual
-
-## Contato
-
-Para dúvidas, sugestões ou reportar bugs, abra uma issue no repositório ou entre em contato através do email: [seu-email@exemplo.com]
+Para dúvidas, sugestões ou reportar bugs, abra uma issue no repositório ou entre em contato através do email: 104482@urisantiago.br
 
 ---
 
