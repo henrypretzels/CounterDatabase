@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.counterdatabase.ui.skins.SkinsActivity
+import com.example.counterdatabase.ui.stickers.StickersActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,8 @@ class MainActivity : AppCompatActivity() {
 
         val stickersButton = findViewById<ImageButton>(R.id.stickers_button)
         stickersButton.setOnClickListener {
-            Toast.makeText(this, "Stickers button clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, StickersActivity::class.java)
+            startActivity(intent)
         }
 
         val agentsButton = findViewById<ImageButton>(R.id.agents_button)

@@ -25,6 +25,12 @@
         <activity
             android:name=".ui.skins.SkinsActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.stickers.StickersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.stickers.StickerDetailsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
