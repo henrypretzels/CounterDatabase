@@ -8,4 +8,7 @@ interface ApiService {
     
     @GET("stickers.json")
     suspend fun getStickers(): List<Sticker>
+
+    @GET("highlights.json")
+    suspend fun getHighlights(): List<Highlight>
 }

@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.counterdatabase.ui.highlights.HighlightsActivity
 import com.example.counterdatabase.ui.skins.SkinsActivity
 import com.example.counterdatabase.ui.stickers.StickersActivity
 
@@ -42,6 +43,12 @@ class MainActivity : AppCompatActivity() {
         val agentsButton = findViewById<ImageButton>(R.id.agents_button)
         agentsButton.setOnClickListener {
             Toast.makeText(this, "Agents button clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        val highlightsButton = findViewById<ImageButton>(R.id.highlights_button)
+        highlightsButton.setOnClickListener {
+            val intent = Intent(this, HighlightsActivity::class.java)
+            startActivity(intent)
         }
     }
 }

@@ -29,10 +29,10 @@ class StickersViewModel : ViewModel() {
         if (query.isNullOrEmpty()) {
             _stickers.value = allStickers
         } else {
-            _stickers.value = allStickers.filter { 
+            _stickers.value = allStickers.filter {
                 it.name.contains(query, ignoreCase = true) ||
-                it.tournament_team.contains(query, ignoreCase = true) ||
-                it.tournament_event.contains(query, ignoreCase = true)
+                it.tournament_team?.contains(query, ignoreCase = true) == true ||
+                it.tournament_event?.contains(query, ignoreCase = true) == true
             }
         }
     }

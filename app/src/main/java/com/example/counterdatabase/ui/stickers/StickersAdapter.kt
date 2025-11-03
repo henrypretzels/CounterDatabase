@@ -31,9 +31,11 @@ class StickersAdapter : ListAdapter<Sticker, StickersAdapter.StickerViewHolder>(
     class StickerViewHolder(private val binding: StickerItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(sticker: Sticker) {
             binding.stickerName.text = sticker.name
-            binding.stickerRarity.text = sticker.rarity.name
-            binding.stickerRarity.setTextColor(Color.parseColor(sticker.rarity.color))
-            binding.stickerType.text = sticker.type
+            binding.stickerRarity.text = sticker.rarity?.name ?: ""
+            sticker.rarity?.color?.let {
+                binding.stickerRarity.setTextColor(Color.parseColor(it))
+            }
+            binding.stickerType.text = sticker.type ?: ""
             Glide.with(binding.root.context)
                 .load(sticker.image)
                 .into(binding.stickerImage)

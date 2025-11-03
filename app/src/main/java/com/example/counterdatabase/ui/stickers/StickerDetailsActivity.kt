@@ -1,5 +1,6 @@
 package com.example.counterdatabase.ui.stickers
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -20,14 +21,16 @@ class StickerDetailsActivity : AppCompatActivity() {
         sticker?.let {
             Glide.with(this).load(it.image).into(binding.stickerImage)
             binding.stickerName.text = it.name
-            binding.stickerDescription.text = it.description
-            binding.stickerRarity.text = "Rarity: ${it.rarity.name}"
-            binding.stickerRarity.setTextColor(android.graphics.Color.parseColor(it.rarity.color))
-            binding.stickerType.text = "Type: ${it.type}"
-            binding.stickerEffect.text = "Effect: ${it.effect}"
-            binding.stickerTournamentEvent.text = "Tournament: ${it.tournament_event}"
-            binding.stickerTournamentTeam.text = "Team: ${it.tournament_team}"
-            binding.stickerMarketHashName.text = "Market Name: ${it.market_hash_name}"
+            binding.stickerDescription.text = it.description ?: ""
+            binding.stickerRarity.text = "Rarity: ${it.rarity?.name ?: ""}"
+            it.rarity?.color?.let { color ->
+                binding.stickerRarity.setTextColor(Color.parseColor(color))
+            }
+            binding.stickerType.text = "Type: ${it.type ?: ""}"
+            binding.stickerEffect.text = "Effect: ${it.effect ?: ""}"
+            binding.stickerTournamentEvent.text = "Tournament: ${it.tournament_event ?: ""}"
+            binding.stickerTournamentTeam.text = "Team: ${it.tournament_team ?: ""}"
+            binding.stickerMarketHashName.text = "Market Name: ${it.market_hash_name ?: ""}"
         }
     }
 }

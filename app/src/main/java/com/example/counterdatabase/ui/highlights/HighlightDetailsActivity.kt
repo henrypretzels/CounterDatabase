@@ -1,0 +1,48 @@
+package com.example.counterdatabase.ui.highlights
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import com.example.counterdatabase.data.Highlight
+import com.example.counterdatabase.databinding.ActivityHighlightDetailsBinding
+
+class HighlightDetailsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityHighlightDetailsBinding
+    private var player: ExoPlayer? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityHighlightDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val highlight = intent.getParcelableExtra<Highlight>("highlight")
+
+        highlight?.let {
+            binding.highlightName.text = it.name
+            binding.highlightDescription.text = it.description ?: ""
+            binding.highlightTournament.text = "Tournament: ${it.tournament_event ?: ""}"
+            binding.highlightTeams.text = "Teams: ${it.team0 ?: ""} vs ${it.team1 ?: ""}"
+            binding.highlightStage.text = "Stage: ${it.stage ?: ""}"
+            binding.highlightMap.text = "Map: ${it.map ?: ""}"
+
+            it.video?.let { videoUrl -> initializePlayer(videoUrl) }
+        }
+    }
+
+    private fun initializePlayer(videoUrl: String) {
+        player = ExoPlayer.Builder(this).build()
+        binding.playerView.player = player
+
+        val mediaItem = MediaItem.fromUri(videoUrl)
+        player?.setMediaItem(mediaItem)
+        player?.prepare()
+        player?.play()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+    }
+}
