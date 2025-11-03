@@ -1,6 +1,7 @@
 package com.example.counterdatabase.ui.highlights
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -21,13 +22,42 @@ class HighlightDetailsActivity : AppCompatActivity() {
 
         highlight?.let {
             binding.highlightName.text = it.name
-            binding.highlightDescription.text = it.description ?: ""
-            binding.highlightTournament.text = "Tournament: ${it.tournament_event ?: ""}"
-            binding.highlightTeams.text = "Teams: ${it.team0 ?: ""} vs ${it.team1 ?: ""}"
-            binding.highlightStage.text = "Stage: ${it.stage ?: ""}"
-            binding.highlightMap.text = "Map: ${it.map ?: ""}"
 
-            it.video?.let { videoUrl -> initializePlayer(videoUrl) }
+            if (it.description.isNullOrEmpty()) {
+                binding.highlightDescription.visibility = View.GONE
+            } else {
+                binding.highlightDescription.text = it.description
+            }
+
+            if (it.tournament_event.isNullOrEmpty()) {
+                binding.highlightTournament.visibility = View.GONE
+            } else {
+                binding.highlightTournament.text = "Tournament: ${it.tournament_event}"
+            }
+
+            if (it.team0.isNullOrEmpty() || it.team1.isNullOrEmpty()) {
+                binding.highlightTeams.visibility = View.GONE
+            } else {
+                binding.highlightTeams.text = "Teams: ${it.team0} vs ${it.team1}"
+            }
+
+            if (it.stage.isNullOrEmpty()) {
+                binding.highlightStage.visibility = View.GONE
+            } else {
+                binding.highlightStage.text = "Stage: ${it.stage}"
+            }
+
+            if (it.map.isNullOrEmpty()) {
+                binding.highlightMap.visibility = View.GONE
+            } else {
+                binding.highlightMap.text = "Map: ${it.map}"
+            }
+
+            if (it.video.isNullOrEmpty()) {
+                binding.playerView.visibility = View.GONE
+            } else {
+                initializePlayer(it.video)
+            }
         }
     }
 

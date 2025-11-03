@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Skin(
     val id: String,
     val name: String,
-    val description: String,
+    val description: String?,
     val weapon: Weapon,
     val category: Category,
     val pattern: Pattern,
