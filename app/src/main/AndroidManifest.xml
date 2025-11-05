@@ -40,6 +40,16 @@
         <activity
             android:name=".ui.highlights.HighlightDetailsActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.highlights.FullscreenVideoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".ui.crates.CratesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.crates.CrateDetailsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

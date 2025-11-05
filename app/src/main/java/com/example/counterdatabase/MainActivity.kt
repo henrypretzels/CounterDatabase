@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.counterdatabase.ui.crates.CratesActivity
 import com.example.counterdatabase.ui.highlights.HighlightsActivity
 import com.example.counterdatabase.ui.skins.SkinsActivity
 import com.example.counterdatabase.ui.stickers.StickersActivity
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         val cratesButton = findViewById<ImageButton>(R.id.crates_button)
         cratesButton.setOnClickListener {
-            Toast.makeText(this, "Crates button clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, CratesActivity::class.java)
+            startActivity(intent)
         }
 
         val stickersButton = findViewById<ImageButton>(R.id.stickers_button)

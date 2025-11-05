@@ -1,7 +1,9 @@
 package com.example.counterdatabase.ui.highlights
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -12,6 +14,14 @@ class HighlightDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHighlightDetailsBinding
     private var player: ExoPlayer? = null
+    private var videoUrl: String? = null
+    private var currentPlaybackPosition: Long = 0
+
+    private val fullscreenResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            currentPlaybackPosition = result.data?.getLongExtra("playback_position", 0) ?: 0
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +65,17 @@ class HighlightDetailsActivity : AppCompatActivity() {
 
             if (it.video.isNullOrEmpty()) {
                 binding.playerView.visibility = View.GONE
+                binding.fullscreenButton.visibility = View.GONE
             } else {
-                initializePlayer(it.video)
+                videoUrl = it.video
             }
+        }
+
+        binding.fullscreenButton.setOnClickListener {
+            val intent = Intent(this, FullscreenVideoActivity::class.java)
+            intent.putExtra("video_url", videoUrl)
+            intent.putExtra("playback_position", player?.currentPosition ?: 0)
+            fullscreenResultLauncher.launch(intent)
         }
     }
 
@@ -67,12 +85,38 @@ class HighlightDetailsActivity : AppCompatActivity() {
 
         val mediaItem = MediaItem.fromUri(videoUrl)
         player?.setMediaItem(mediaItem)
+        player?.seekTo(currentPlaybackPosition)
         player?.prepare()
-        player?.play()
+        player?.playWhenReady = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        player?.release()
+    private fun releasePlayer() {
+        player?.let {
+            currentPlaybackPosition = it.currentPosition
+            it.release()
+            player = null
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        videoUrl?.let { initializePlayer(it) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (player == null) {
+            videoUrl?.let { initializePlayer(it) }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        releasePlayer()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        releasePlayer()
     }
 }
