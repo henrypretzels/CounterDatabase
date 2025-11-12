@@ -13,7 +13,7 @@ import com.example.counterdatabase.databinding.ActivityHighlightDetailsBinding
 class HighlightDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHighlightDetailsBinding
-    private var player: ExoPlayer? = null
+    internal var player: ExoPlayer? = null
     private var videoUrl: String? = null
     private var currentPlaybackPosition: Long = 0
 

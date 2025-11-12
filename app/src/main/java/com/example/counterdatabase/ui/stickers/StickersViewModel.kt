@@ -15,7 +15,7 @@ class StickersViewModel : ViewModel() {
     private val _stickers = MutableLiveData<List<Sticker>>()
     val stickers: LiveData<List<Sticker>> = _stickers
 
-    private var allStickers: List<Sticker> = emptyList()
+    var allStickers: List<Sticker> = emptyList()
 
     fun getStickers() {
         viewModelScope.launch {

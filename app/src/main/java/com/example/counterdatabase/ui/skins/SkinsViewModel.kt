@@ -15,7 +15,7 @@ class SkinsViewModel : ViewModel() {
     private val _skins = MutableLiveData<List<Skin>>()
     val skins: LiveData<List<Skin>> = _skins
 
-    private var allSkins: List<Skin> = emptyList()
+    internal var allSkins: List<Skin> = emptyList()
 
     fun getSkins() {
         viewModelScope.launch {
