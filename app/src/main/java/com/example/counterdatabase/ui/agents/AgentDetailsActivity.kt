@@ -44,9 +44,14 @@ class AgentDetailsActivity : AppCompatActivity() {
         }
         binding.agentDetailTeam.text = agent.team.name
 
-        // Description
+        // Description with expanded manual string cleaning
         if (!agent.description.isNullOrEmpty()) {
-            binding.agentDetailDescription.text = agent.description
+            val cleanedDescription = agent.description
+                .replace("\\n", "\n")
+                .replace("\\\"", "\"")
+                .replace("<i>", "")
+                .replace("</i>", "")
+            binding.agentDetailDescription.text = cleanedDescription
             binding.agentDetailDescription.visibility = View.VISIBLE
         } else {
             binding.agentDetailDescription.visibility = View.GONE

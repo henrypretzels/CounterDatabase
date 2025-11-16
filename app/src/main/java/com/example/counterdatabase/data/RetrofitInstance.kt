@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitInstance {
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/pt-BR/")
+            .baseUrl("https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

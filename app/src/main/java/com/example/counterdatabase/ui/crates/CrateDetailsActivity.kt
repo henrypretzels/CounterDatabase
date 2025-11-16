@@ -1,5 +1,6 @@
 package com.example.counterdatabase.ui.crates
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,12 @@ class CrateDetailsActivity : AppCompatActivity() {
             if (it.description.isNullOrEmpty()) {
                 binding.crateDescription.visibility = View.GONE
             } else {
-                binding.crateDescription.text = it.description
+                val cleanedDescription = it.description
+                    .replace("\\n", "\n")
+                    .replace("\\\"", "\"")
+                    .replace("<i>", "")
+                    .replace("</i>", "")
+                binding.crateDescription.text = cleanedDescription
             }
 
             if (it.contains.isNullOrEmpty()) {
