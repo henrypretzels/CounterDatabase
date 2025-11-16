@@ -50,6 +50,12 @@
         <activity
             android:name=".ui.crates.CrateDetailsActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.agents.AgentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.agents.AgentDetailsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
