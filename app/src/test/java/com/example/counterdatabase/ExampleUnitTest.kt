@@ -9,10 +9,13 @@ import com.example.counterdatabase.data.Crate
 import com.example.counterdatabase.data.Pattern
 import com.example.counterdatabase.data.Rarity
 import com.example.counterdatabase.data.Skin
+import com.example.counterdatabase.data.Sticker
 import com.example.counterdatabase.data.Weapon
 import com.example.counterdatabase.ui.crates.CratesViewModel
 import com.example.counterdatabase.ui.skins.SkinsViewModel
+import com.example.counterdatabase.ui.stickers.StickersViewModel
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -185,5 +188,146 @@ class ExampleUnitTest {
         val result = vm.crates.getOrAwaitValue()
         assertEquals(2, result?.size)
         assertEquals(listOf(c1, c3), result)
+    }
+
+    // ========== Category Tests ==========
+
+    @Test
+    fun category_creation_withAllProperties_success() {
+        val category = Category(
+            id = "cat1",
+            name = "Rifle"
+        )
+
+        assertEquals("cat1", category.id)
+        assertEquals("Rifle", category.name)
+    }
+
+    @Test
+    fun category_equality_comparison_success() {
+        val category1 = Category("1", "Rifle")
+        val category2 = Category("1", "Rifle")
+        val category3 = Category("2", "Pistol")
+
+        assertEquals(category1, category2)
+        assertNotEquals(category1, category3)
+    }
+
+    // ========== StickersViewModel Tests ==========
+
+    private lateinit var stickersViewModel: StickersViewModel
+
+    // Correctly structured mock object for the Crate
+    private val mockCrateForStickers = Crate(
+        id = "crate_1",
+        name = "Community Sticker Capsule 1",
+        description = "A collection of community-created stickers.",
+        type = "Sticker Capsule",
+        first_sale_date = "2014-02-20",
+        contains = null,
+        contains_rare = null,
+        image = "image_url_crate",
+        loot_list = null
+    )
+
+    private val sampleStickers = listOf(
+        Sticker(
+            id = "sticker-1", name = "Sticker Alpha", description = "desc", rarity = mockRarity,
+            crates = listOf(mockCrateForStickers), tournament_event = null, tournament_team = null, type = "Default",
+            market_hash_name = "market_1", effect = null, image = "img_1"
+        ),
+        Sticker(
+            id = "sticker-2", name = "Team Bravo Sticker", description = "desc", rarity = mockRarity,
+            crates = listOf(mockCrateForStickers), tournament_event = "PGL Major 2024", tournament_team = "Team Bravo", type = "Tournament",
+            market_hash_name = "market_2", effect = null, image = "img_2"
+        ),
+        Sticker(
+            id = "sticker-3", name = "Player Charlie Signature", description = "desc", rarity = mockRarity,
+            crates = listOf(mockCrateForStickers), tournament_event = "PGL Major 2024", tournament_team = "Team Charlie", type = "Tournament",
+            market_hash_name = "market_3", effect = null, image = "img_3"
+        ),
+        Sticker(
+            id = "sticker-4", name = "Sticker Delta", description = "desc", rarity = mockRarity,
+            crates = listOf(mockCrateForStickers), tournament_event = null, tournament_team = null, type = "Default",
+            market_hash_name = "market_4", effect = null, image = "img_4"
+        ),
+        Sticker(
+            id = "sticker-5", name = "Team Bravo Holo", description = "desc", rarity = mockRarity,
+            crates = listOf(mockCrateForStickers), tournament_event = "ESL One Cologne 2023", tournament_team = "Team Bravo", type = "Tournament",
+            market_hash_name = "market_5", effect = "Holo", image = "img_5"
+        )
+    )
+
+    @Test
+    fun `searchStickers should filter by name correctly`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("Sticker")
+        val filteredList = stickersViewModel.stickers.value
+        assertEquals(2, filteredList?.size)
+        assertEquals("Sticker Alpha", filteredList?.get(0)?.name)
+        assertEquals("Sticker Delta", filteredList?.get(1)?.name)
+    }
+
+    @Test
+    fun `searchStickers should filter by team correctly`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("Bravo")
+        val filteredList = stickersViewModel.stickers.value
+        assertEquals(2, filteredList?.size)
+        assertEquals("Team Bravo Sticker", filteredList?.get(0)?.name)
+        assertEquals("Team Bravo Holo", filteredList?.get(1)?.name)
+    }
+
+    @Test
+    fun `searchStickers should filter by event correctly`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("PGL Major")
+        val filteredList = stickersViewModel.stickers.value
+        assertEquals(2, filteredList?.size)
+        assertEquals("Team Bravo Sticker", filteredList?.get(0)?.name)
+        assertEquals("Player Charlie Signature", filteredList?.get(1)?.name)
+    }
+
+    @Test
+    fun `searchStickers should be case-insensitive`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("bravo")
+        val filteredList = stickersViewModel.stickers.value
+        assertEquals(2, filteredList?.size)
+    }
+
+    @Test
+    fun `searchStickers with empty query should return the full list`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("Bravo")
+        assertEquals(2, stickersViewModel.stickers.value?.size)
+
+        stickersViewModel.searchStickers("")
+        assertEquals(5, stickersViewModel.stickers.value?.size)
+    }
+
+    @Test
+    fun `searchStickers with null query should return the full list`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("Bravo")
+        assertEquals(2, stickersViewModel.stickers.value?.size)
+
+        stickersViewModel.searchStickers(null)
+        assertEquals(5, stickersViewModel.stickers.value?.size)
+    }
+
+    @Test
+    fun `searchStickers with no matching results should return an empty list`() {
+        stickersViewModel = StickersViewModel()
+        stickersViewModel.allStickers = sampleStickers
+        stickersViewModel.searchStickers("NonExistentSticker")
+        val result = stickersViewModel.stickers.value
+        assertEquals(0, result?.size)
     }
 }
