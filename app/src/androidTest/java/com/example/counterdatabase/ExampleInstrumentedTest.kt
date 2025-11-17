@@ -57,6 +57,7 @@ class ExampleInstrumentedTest {
     fun displaysAllDetails_whenHighlightIsComplete() {
         val intent = Intent(ApplicationProvider.getApplicationContext(), HighlightDetailsActivity::class.java)
             .putExtra("highlight", fullHighlight)
+            .putExtra("is_test_run", true)
 
         ActivityScenario.launch<HighlightDetailsActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
@@ -76,6 +77,7 @@ class ExampleInstrumentedTest {
     fun hidesEmptyViews_whenDataIsMissing() {
         val intent = Intent(ApplicationProvider.getApplicationContext(), HighlightDetailsActivity::class.java)
             .putExtra("highlight", missingDataHighlight)
+            .putExtra("is_test_run", true)
 
         ActivityScenario.launch<HighlightDetailsActivity>(intent).use { scenario ->
             scenario.onActivity { activity ->
@@ -96,6 +98,7 @@ class ExampleInstrumentedTest {
     fun playerIsReleased_onStop() {
         val intent = Intent(ApplicationProvider.getApplicationContext(), HighlightDetailsActivity::class.java)
             .putExtra("highlight", fullHighlight) // Using fullHighlight as it has a video
+            .putExtra("is_test_run", true)
 
         ActivityScenario.launch<HighlightDetailsActivity>(intent).use { scenario ->
             // Move to a state where player is guaranteed to be created

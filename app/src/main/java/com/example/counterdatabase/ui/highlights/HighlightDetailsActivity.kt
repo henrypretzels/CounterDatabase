@@ -1,7 +1,9 @@
 package com.example.counterdatabase.ui.highlights
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -10,12 +12,19 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.example.counterdatabase.data.Highlight
 import com.example.counterdatabase.databinding.ActivityHighlightDetailsBinding
 
+// Helper function for safe parcelable extraction
+inline fun <reified T : Parcelable> Intent.getParcelableExtraCompat(key: String): T? = when {
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getParcelableExtra(key, T::class.java)
+    else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
+}
+
 class HighlightDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHighlightDetailsBinding
     internal var player: ExoPlayer? = null
     private var videoUrl: String? = null
     private var currentPlaybackPosition: Long = 0
+    private var isTestRun: Boolean = false
 
     private val fullscreenResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -28,7 +37,8 @@ class HighlightDetailsActivity : AppCompatActivity() {
         binding = ActivityHighlightDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val highlight = intent.getParcelableExtra<Highlight>("highlight")
+        isTestRun = intent.getBooleanExtra("is_test_run", false)
+        val highlight = intent.getParcelableExtraCompat<Highlight>("highlight")
 
         highlight?.let {
             binding.highlightName.text = it.name
@@ -86,8 +96,12 @@ class HighlightDetailsActivity : AppCompatActivity() {
         val mediaItem = MediaItem.fromUri(videoUrl)
         player?.setMediaItem(mediaItem)
         player?.seekTo(currentPlaybackPosition)
-        player?.prepare()
-        player?.playWhenReady = true
+        
+        // Only prepare the player if it's not a test run
+        if (!isTestRun) {
+            player?.prepare()
+            player?.playWhenReady = true
+        }
     }
 
     private fun releasePlayer() {
