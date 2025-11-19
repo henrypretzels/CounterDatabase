@@ -83,6 +83,11 @@ class ExampleUnitTest {
         Skin("skin-4", "AWP | Gungnir", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url"),
         Skin("skin-5", "Desert Eagle | Dragon's Breath", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url")
     )
+    @Test
+    fun `skins LiveData should be null on init`() {
+        val vm = SkinsViewModel()
+        assertEquals(null, vm.skins.value)
+    }
 
     @Test
     fun `searchSkins should filter the list correctly`() {
@@ -141,6 +146,13 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun `crates LiveData should be null on init`() {
+        // The VM is created fresh in setUp(), but no data is loaded.
+        // Its LiveData should be in its initial state, which is null.
+        assertEquals(null, cratesViewModel.crates.value)
+    }
+
+    @Test
     fun searchCrates_nullQuery_returnsAll() {
         val c1 = makeCrate("1", "Alpha")
         val c2 = makeCrate("2", "Beta")
@@ -163,7 +175,7 @@ class ExampleUnitTest {
         assertEquals(listOf(c1, c3), result)
     }
 
-    // ========== Category Tests ==========
+    // ========== Data Class Integrity Tests ==========
 
     @Test
     fun category_creation_withAllProperties_success() {
@@ -181,6 +193,39 @@ class ExampleUnitTest {
         assertNotEquals(category1, category3)
     }
 
+    @Test
+    fun weapon_creation_withAllProperties_success() {
+        val weapon = Weapon(id = "weapon_deagle", name = "Desert Eagle")
+        assertEquals("weapon_deagle", weapon.id)
+        assertEquals("Desert Eagle", weapon.name)
+    }
+
+    @Test
+    fun weapon_equality_comparison_success() {
+        val weapon1 = Weapon("weapon_deagle", "Desert Eagle")
+        val weapon2 = Weapon("weapon_deagle", "Desert Eagle")
+        val weapon3 = Weapon("weapon_ak47", "AK-47")
+        assertEquals(weapon1, weapon2)
+        assertNotEquals(weapon1, weapon3)
+    }
+
+    @Test
+    fun rarity_creation_withAllProperties_success() {
+        val rarity = Rarity(id = "rarity_common", name = "Common", color = "#b0c3d9")
+        assertEquals("rarity_common", rarity.id)
+        assertEquals("Common", rarity.name)
+        assertEquals("#b0c3d9", rarity.color)
+    }
+
+    @Test
+    fun rarity_equality_comparison_success() {
+        val rarity1 = Rarity("rarity_common", "Common", "#b0c3d9")
+        val rarity2 = Rarity("rarity_common", "Common", "#b0c3d9")
+        val rarity3 = Rarity("rarity_rare", "Rare", "#4b69ff")
+        assertEquals(rarity1, rarity2)
+        assertNotEquals(rarity1, rarity3)
+    }
+
     // ========== StickersViewModel Tests ==========
 
     private val sampleStickers = listOf(
@@ -191,6 +236,12 @@ class ExampleUnitTest {
         Sticker(id = "sticker-5", name = "Team Bravo Holo", description = "desc", rarity = mockRarity, crates = listOf(mockCrateForStickers), tournament_event = "ESL One Cologne 2023", tournament_team = "Team Bravo", type = "Tournament", market_hash_name = "market_5", effect = "Holo", image = "img_5")
     )
 
+    @Test
+    fun `stickers LiveData should be null on init`() {
+        val vm = StickersViewModel()
+        assertEquals(null, vm.stickers.value)
+    }
+    
     @Test
     fun `searchStickers should filter by name correctly`() {
         val nameOnlyStickers = listOf(
@@ -260,7 +311,7 @@ class ExampleUnitTest {
     @Test
     fun `searchStickers with null query should return the full list`() {
         stickersViewModel.searchStickers("Bravo") // Pre-filter to ensure reset works
-        stickersViewModel.searchStickers(null)
+        skinsViewModel.searchSkins(null)
         val filteredList = stickersViewModel.stickers.getOrAwaitValue()
         assertEquals(5, filteredList?.size)
     }
