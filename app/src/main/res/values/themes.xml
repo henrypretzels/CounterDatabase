@@ -6,4 +6,15 @@
     </style>
 
     <style name="Theme.CounterDatabase" parent="Base.Theme.CounterDatabase" />
+
+    <style name="TextAppearance.App.MenuTitle" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.App.MenuSubtitle" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

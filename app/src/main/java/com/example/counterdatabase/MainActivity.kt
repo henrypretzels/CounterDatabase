@@ -1,56 +1,30 @@
 package com.example.counterdatabase
 
-import android.content.Intent
-import android.os.Bundle
-import android.widget.ImageButton
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.counterdatabase.ui.crates.CratesActivity
-import com.example.counterdatabase.ui.highlights.HighlightsActivity
-import com.example.counterdatabase.ui.skins.SkinsActivity
-import com.example.counterdatabase.ui.stickers.StickersActivity
+import android.os.Bundle
+import android.widget.Toast
+import com.example.counterdatabase.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val skinsButton = findViewById<ImageButton>(R.id.skins_button)
-        skinsButton.setOnClickListener {
-            val intent = Intent(this, SkinsActivity::class.java)
-            startActivity(intent)
-        }
+        val data = listOf(
+            MenuItem("Skins", "Customize your looks", R.drawable.ic_skins),
+            MenuItem("Crates", "Open rewards", R.drawable.ic_crates),
+            MenuItem("Stickers", "Collect & use", R.drawable.ic_stickers),
+            MenuItem("Agents", "Choose agents", R.drawable.ic_agents),
+            MenuItem("Highlights", "Watch clips", R.drawable.ic_highlights)
+        )
 
-        val cratesButton = findViewById<ImageButton>(R.id.crates_button)
-        cratesButton.setOnClickListener {
-            val intent = Intent(this, CratesActivity::class.java)
-            startActivity(intent)
-        }
-
-        val stickersButton = findViewById<ImageButton>(R.id.stickers_button)
-        stickersButton.setOnClickListener {
-            val intent = Intent(this, StickersActivity::class.java)
-            startActivity(intent)
-        }
-
-        val agentsButton = findViewById<ImageButton>(R.id.agents_button)
-        agentsButton.setOnClickListener {
-            Toast.makeText(this, "Agents button clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        val highlightsButton = findViewById<ImageButton>(R.id.highlights_button)
-        highlightsButton.setOnClickListener {
-            val intent = Intent(this, HighlightsActivity::class.java)
-            startActivity(intent)
+        binding.menuRecycler.adapter = MenuAdapter(data) { item ->
+            Toast.makeText(this, "Clicked on ${item.title}", Toast.LENGTH_SHORT).show()
+            // TODO: Navigate to the corresponding activity/fragment
         }
     }
 }

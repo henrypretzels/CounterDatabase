@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">CounterDatabase</string>
+    <string name="skins">Skins</string>
+    <string name="crates">Crates</string>
+    <string name="stickers">Stickers</string>
+    <string name="agents">Agents</string>
+    <string name="highlights">Highlights</string>
+    <string name="menu_icon">Menu icon</string>
+    <string name="home_title">Home</string>
+    <string name="home">Home</string>
 </resources>
