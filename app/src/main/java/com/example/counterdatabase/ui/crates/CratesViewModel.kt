@@ -19,9 +19,14 @@ class CratesViewModel : ViewModel() {
 
     fun getCrates() {
         viewModelScope.launch {
-            val result = repository.getCrates()
-            allCrates = result
-            _crates.value = result
+            try {
+                val result = repository.getCrates()
+                allCrates = result
+                _crates.value = result
+            } catch (e: Exception) {
+                android.util.Log.e("CratesViewModel", "Error getting crates", e)
+                _crates.value = emptyList()
+            }
         }
     }
 

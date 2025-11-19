@@ -1,90 +1,104 @@
 package com.example.counterdatabase
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.counterdatabase.data.Category
-import com.example.counterdatabase.data.Pattern
-import com.example.counterdatabase.data.Rarity
-import com.example.counterdatabase.data.Skin
-import com.example.counterdatabase.data.Weapon
-import com.example.counterdatabase.ui.skins.SkinsViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import com.example.counterdatabase.data.Crate
+import com.example.counterdatabase.data.ContainedItem
+import com.example.counterdatabase.ui.crates.CratesViewModel
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
+import java.lang.reflect.Field
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import java.util.concurrent.atomic.AtomicReference
 
 
-class SkinsViewModelTest {
+class ExampleUnitTest {
 
+    // força execução síncrona do LiveData em testes
     @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    val instantExecutorRule: TestRule = InstantTaskExecutorRule()
 
-    private lateinit var viewModel: SkinsViewModel
+    // helper rápido: captura valor de LiveData
+    private fun <T> LiveData<T>.getOrAwaitValue(
+        time: Long = 2,
+        timeUnit: TimeUnit = TimeUnit.SECONDS
+    ): T {
+        val data = AtomicReference<T>()
+        val latch = CountDownLatch(1)
 
-    private val mockRarity = Rarity("rarity_common", "Common", "#ffffff")
-    private val mockWeapon = Weapon("weapon_ak47", "AK-47")
-    private val mockCategory = Category("cat_rifle", "Rifle")
-    private val mockPattern = Pattern("pat_case_hardened", "Case Hardened")
+        val observer = object : Observer<T> {
+            override fun onChanged(o: T?) {
+                data.set(o)
+                latch.countDown()
+                this@getOrAwaitValue.removeObserver(this)
+            }
+        }
 
-    private val sampleSkins = listOf(
-        Skin("skin-1", "AWP | Dragon Lore", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url"),
-        Skin("skin-2", "AK-47 | Redline", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url"),
-        Skin("skin-3", "M4A4 | Howl", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url"),
-        Skin("skin-4", "AWP | Gungnir", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url"),
-        Skin("skin-5", "Desert Eagle | Dragon's Breath", "description", mockWeapon, mockCategory, mockPattern, 0.0f, 1.0f, mockRarity, false, "img_url")
-    )
+        this.observeForever(observer)
 
-    @Before //mudar para before Each
-    fun setUp() {
-        viewModel = SkinsViewModel()
-        viewModel.allSkins = sampleSkins
-        viewModel.searchSkins(null)
+        if (!latch.await(time, timeUnit)) {
+            this.removeObserver(observer)
+            throw TimeoutException("LiveData value was never set.")
+        }
+
+        return data.get()
     }
 
-    @Test
-    fun `searchSkins should filter the list correctly`() {
-        viewModel.searchSkins("Dragon")
-
-        val filteredSkins = viewModel.skins.value
-        assertEquals(2, filteredSkins?.size)
-        assertEquals("AWP | Dragon Lore", filteredSkins?.get(0)?.name)
-        assertEquals("Desert Eagle | Dragon's Breath", filteredSkins?.get(1)?.name)
+    // cria um Crate mínimo
+    private fun makeCrate(id: String, name: String): Crate {
+        return Crate(
+            id = id,
+            name = name,
+            description = null,
+            type = null,
+            first_sale_date = null,
+            contains = listOf(ContainedItem("item1", "Item 1")),
+            contains_rare = null,
+            image = "",
+            loot_list = null
+        )
     }
 
-    @Test
-    fun `searchSkins should be case-insensitive`() {
-        viewModel.searchSkins("dragon")
-
-        val filteredSkins = viewModel.skins.value
-        assertEquals(2, filteredSkins?.size)
+    // usa reflection para setar a lista privada allCrates do ViewModel (sem alterar o código da app)
+    private fun setPrivateAllCrates(viewModel: CratesViewModel, list: List<Crate>) {
+        val field: Field = viewModel.javaClass.getDeclaredField("allCrates")
+        field.isAccessible = true
+        field.set(viewModel, list)
     }
 
+    // query nula deve retornar todas as crates
     @Test
-    fun `searchSkins with empty query should return the full list`() {
-        viewModel.searchSkins("Dragon")
-        assertEquals(2, viewModel.skins.value?.size)
+    fun searchCrates_nullQuery_returnsAll() {
+        val vm = CratesViewModel()
+        val c1 = makeCrate("1", "Alpha")
+        val c2 = makeCrate("2", "Beta")
+        setPrivateAllCrates(vm, listOf(c1, c2))
 
-        viewModel.searchSkins("")
+        vm.searchCrates(null)
 
-        val fullList = viewModel.skins.value
-        assertEquals(5, fullList?.size)
+        val result = vm.crates.getOrAwaitValue()
+        assertEquals(2, result.size)
+        assertEquals(listOf(c1, c2), result)
     }
 
+    // busca filtra por nome
     @Test
-    fun `searchSkins with null query should return the full list`() {
-        viewModel.searchSkins("Redline")
-        assertEquals(1, viewModel.skins.value?.size)
+    fun searchCrates_filtersByName_ignoreCase() {
+        val vm = CratesViewModel()
+        val c1 = makeCrate("1", "Weapon Crate")
+        val c2 = makeCrate("2", "Skin Crate")
+        val c3 = makeCrate("3", "Special Weapon")
+        setPrivateAllCrates(vm, listOf(c1, c2, c3))
 
-        viewModel.searchSkins(null)
+        vm.searchCrates("weapon")
 
-        val fullList = viewModel.skins.value
-        assertEquals(5, fullList?.size)
-    }
-
-    @Test
-    fun `searchSkins with no matching results should return an empty list`() {
-        viewModel.searchSkins("NonExistentSkinName")
-
-        val result = viewModel.skins.value
-        assertEquals(0, result?.size)
+        val result = vm.crates.getOrAwaitValue()
+        assertEquals(2, result.size)
+        assertEquals(listOf(c1, c3), result)
     }
 }

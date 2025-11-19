@@ -19,9 +19,14 @@ class StickersViewModel : ViewModel() {
 
     fun getStickers() {
         viewModelScope.launch {
-            val result = repository.getStickers()
-            allStickers = result
-            _stickers.value = result
+            try {
+                val result = repository.getStickers()
+                allStickers = result
+                _stickers.value = result
+            } catch (e: Exception) {
+                android.util.Log.e("StickersViewModel", "Error getting stickers", e)
+                _stickers.value = emptyList()
+            }
         }
     }
 

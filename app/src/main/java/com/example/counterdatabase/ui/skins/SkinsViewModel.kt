@@ -18,10 +18,20 @@ class SkinsViewModel : ViewModel() {
     internal var allSkins: List<Skin> = emptyList()
 
     fun getSkins() {
+        android.util.Log.d("SkinsViewModel", "getSkins() called")
         viewModelScope.launch {
-            val result = repository.getSkins()
-            allSkins = result
-            _skins.value = result
+            try {
+                android.util.Log.d("SkinsViewModel", "Calling repository.getSkins()...")
+                val result = repository.getSkins()
+                android.util.Log.d("SkinsViewModel", "Repository returned ${result.size} skins")
+                allSkins = result
+                _skins.value = result
+                android.util.Log.d("SkinsViewModel", "LiveData updated with ${result.size} skins")
+            } catch (e: Exception) {
+                android.util.Log.e("SkinsViewModel", "Error getting skins", e)
+                e.printStackTrace()
+                _skins.value = emptyList()
+            }
         }
     }
 

@@ -1,8 +1,8 @@
 package com.example.counterdatabase.ui.agents
 
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -18,54 +18,73 @@ class AgentDetailsActivity : AppCompatActivity() {
         binding = ActivityAgentDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val agent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        val agent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("agent", Agent::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra("agent")
+            intent.getParcelableExtra<Agent>("agent")
         }
 
-        agent?.let { populateUi(it) }
+        agent?.let {
+            binding.agentName.text = it.name
+
+            Glide.with(this)
+                .load(it.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .into(binding.agentImage)
+
+            if (it.description.isNullOrEmpty()) {
+                binding.descriptionCard.visibility = View.GONE
+            } else {
+                val unescapedDescription = it.description.replace("\\n", "<br>").replace("\\\"", "\"")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    binding.agentDescription.text = Html.fromHtml(unescapedDescription, Html.FROM_HTML_MODE_COMPACT)
+                } else {
+                    @Suppress("DEPRECATION")
+                    binding.agentDescription.text = Html.fromHtml(unescapedDescription)
+                }
+            }
+
+            if (it.team != null) {
+                binding.teamContainer.visibility = View.VISIBLE
+                binding.agentTeam.text = it.team.name
+            } else {
+                binding.teamContainer.visibility = View.GONE
+            }
+
+            if (it.rarity != null) {
+                binding.rarityContainer.visibility = View.VISIBLE
+                binding.agentRarity.text = it.rarity.name
+                binding.agentRarity.setTextColor(android.graphics.Color.parseColor(it.rarity.color))
+            } else {
+                binding.rarityContainer.visibility = View.GONE
+            }
+
+            if (it.collections.isNullOrEmpty()) {
+                binding.collectionsCard.visibility = View.GONE
+            } else {
+                binding.collectionsCard.visibility = View.VISIBLE
+                val collectionsText = it.collections.joinToString("\n") { collection -> "• ${collection.name}" }
+                binding.agentCollections.text = collectionsText
+            }
+
+            if (it.market_hash_name.isNullOrEmpty()) {
+                binding.marketContainer.visibility = View.GONE
+            } else {
+                binding.marketContainer.visibility = View.VISIBLE
+                binding.agentMarketHashName.text = it.market_hash_name
+            }
+        }
     }
 
-    private fun populateUi(agent: Agent) {
-        binding.agentDetailName.text = agent.name
-
-        Glide.with(this)
-            .load(agent.image)
-            .into(binding.agentDetailImage)
-
-        // Rarity and Team
-        binding.agentDetailRarity.text = agent.rarity.name
-        try {
-            binding.agentDetailRarity.setTextColor(Color.parseColor(agent.rarity.color))
-        } catch (e: IllegalArgumentException) {
-            // Handle invalid color string
-        }
-        binding.agentDetailTeam.text = agent.team.name
-
-        // Description with expanded manual string cleaning
-        if (!agent.description.isNullOrEmpty()) {
-            val cleanedDescription = agent.description
-                .replace("\\n", "\n")
-                .replace("\\\"", "\"")
-                .replace("<i>", "")
-                .replace("</i>", "")
-            binding.agentDetailDescription.text = cleanedDescription
-            binding.agentDetailDescription.visibility = View.VISIBLE
-        } else {
-            binding.agentDetailDescription.visibility = View.GONE
-        }
-
-        // Collections
-        if (!agent.collections.isNullOrEmpty()) {
-            val collectionsText = agent.collections.joinToString(separator = "\n") { "- ${it.name}" }
-            binding.agentDetailCollections.text = collectionsText
-            binding.agentDetailCollections.visibility = View.VISIBLE
-            binding.agentCollectionsTitle.visibility = View.VISIBLE
-        } else {
-            binding.agentDetailCollections.visibility = View.GONE
-            binding.agentCollectionsTitle.visibility = View.GONE
-        }
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }
+

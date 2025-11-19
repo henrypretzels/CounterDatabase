@@ -17,15 +17,16 @@ class AgentsViewModel : ViewModel() {
 
     private var allAgents: List<Agent> = emptyList()
 
-    init {
-        getAgents()
-    }
-
-    private fun getAgents() {
+    fun getAgents() {
         viewModelScope.launch {
-            val result = repository.getAgents()
-            allAgents = result
-            _agents.value = result
+            try {
+                val result = repository.getAgents()
+                allAgents = result
+                _agents.value = result
+            } catch (e: Exception) {
+                android.util.Log.e("AgentsViewModel", "Error getting agents", e)
+                _agents.value = emptyList()
+            }
         }
     }
 
@@ -33,9 +34,8 @@ class AgentsViewModel : ViewModel() {
         if (query.isNullOrEmpty()) {
             _agents.value = allAgents
         } else {
-            _agents.value = allAgents.filter {
-                it.name.contains(query, ignoreCase = true)
-            }
+            _agents.value = allAgents.filter { it.name.contains(query, ignoreCase = true) }
         }
     }
 }
+

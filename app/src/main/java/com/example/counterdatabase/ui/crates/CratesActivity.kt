@@ -1,7 +1,7 @@
 package com.example.counterdatabase.ui.crates
 
 import android.os.Bundle
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,14 +15,38 @@ class CratesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        try {
+            com.example.counterdatabase.data.RetrofitInstance.initialize(this)
+        } catch (e: Exception) {
+            android.util.Log.w("CratesActivity", "Retrofit already initialized or error", e)
+        }
+        
         binding = ActivityCratesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = getString(com.example.counterdatabase.R.string.crates)
+
+        binding.recyclerView.setHasFixedSize(false)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
-        viewModel.crates.observe(this) {
-            adapter.submitList(it)
+        viewModel.crates.observe(this) { crates ->
+            android.util.Log.d("CratesActivity", "Crates received: ${crates.size}")
+            binding.progressBar.visibility = android.view.View.GONE
+            
+            if (crates.isEmpty()) {
+                binding.emptyStateText.visibility = android.view.View.VISIBLE
+                binding.emptyStateText.text = "Nenhum crate encontrado"
+                binding.recyclerView.visibility = android.view.View.INVISIBLE
+            } else {
+                binding.emptyStateText.visibility = android.view.View.GONE
+                binding.recyclerView.visibility = android.view.View.VISIBLE
+                adapter.submitList(crates)
+            }
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -37,5 +61,10 @@ class CratesActivity : AppCompatActivity() {
         })
 
         viewModel.getCrates()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

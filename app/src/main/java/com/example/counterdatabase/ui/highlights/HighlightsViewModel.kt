@@ -19,8 +19,13 @@ class HighlightsViewModel : ViewModel() {
 
     fun getHighlights() {
         viewModelScope.launch {
-            allHighlights = repository.getHighlights()
-            _highlights.value = allHighlights
+            try {
+                allHighlights = repository.getHighlights()
+                _highlights.value = allHighlights
+            } catch (e: Exception) {
+                android.util.Log.e("HighlightsViewModel", "Error getting highlights", e)
+                _highlights.value = emptyList()
+            }
         }
     }
 

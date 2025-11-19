@@ -36,8 +36,25 @@ class StickersAdapter : ListAdapter<Sticker, StickersAdapter.StickerViewHolder>(
                 binding.stickerRarity.setTextColor(Color.parseColor(it))
             }
             binding.stickerType.text = sticker.type ?: ""
+            binding.stickerType.visibility = if (sticker.type.isNullOrEmpty()) {
+                android.view.View.GONE
+            } else {
+                android.view.View.VISIBLE
+            }
+            
+            if (sticker.rarity != null) {
+                binding.stickerRarity.visibility = android.view.View.VISIBLE
+            } else {
+                binding.stickerRarity.visibility = android.view.View.GONE
+            }
+            
             Glide.with(binding.root.context)
                 .load(sticker.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .placeholder(android.R.color.darker_gray)
+                .error(android.R.color.darker_gray)
                 .into(binding.stickerImage)
         }
     }

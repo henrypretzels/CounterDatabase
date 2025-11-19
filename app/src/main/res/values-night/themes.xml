@@ -1,7 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.CounterDatabase" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/csgoAccent</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="colorSurface">@color/csgoSurface</item>
+        <item name="colorOnSurface">@color/textPrimary</item>
+        <item name="android:colorBackground">@color/csgoBackground</item>
+        <item name="android:statusBarColor">@color/csgoBackground</item>
+        <item name="android:navigationBarColor">@color/csgoBackground</item>
     </style>
 </resources>

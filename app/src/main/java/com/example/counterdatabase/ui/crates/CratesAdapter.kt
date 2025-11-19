@@ -30,8 +30,20 @@ class CratesAdapter : ListAdapter<Crate, CratesAdapter.CrateViewHolder>(CrateDif
     class CrateViewHolder(private val binding: CrateItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(crate: Crate) {
             binding.crateName.text = crate.name
+            binding.crateDescription.text = crate.description ?: ""
+            binding.crateDescription.visibility = if (crate.description.isNullOrEmpty()) {
+                android.view.View.GONE
+            } else {
+                android.view.View.VISIBLE
+            }
+            
             Glide.with(binding.root.context)
                 .load(crate.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .placeholder(android.R.color.darker_gray)
+                .error(android.R.color.darker_gray)
                 .into(binding.crateImage)
         }
     }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home" />
+        
+        <item
+            android:id="@+id/nav_skins"
+            android:icon="@drawable/ak47"
+            android:title="@string/skins" />
+        
+        <item
+            android:id="@+id/nav_stickers"
+            android:icon="@drawable/ic_sticker"
+            android:title="@string/stickers" />
+        
+        <item
+            android:id="@+id/nav_crates"
+            android:icon="@drawable/ic_crate_box"
+            android:title="@string/crates" />
+        
+        <item
+            android:id="@+id/nav_agents"
+            android:icon="@drawable/ic_agent"
+            android:title="@string/agents" />
+        
+        <item
+            android:id="@+id/nav_highlights"
+            android:icon="@drawable/ic_play_highlight"
+            android:title="@string/highlights" />
+    </group>
+</menu>
+
