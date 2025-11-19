@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.counterdatabase.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_skins"
+        android:name="com.example.counterdatabase.ui.skins.SkinsFragment"
+        android:label="@string/menu_skins"
+        tools:layout="@layout/fragment_skins" />
+
+    <fragment
+        android:id="@+id/nav_stickers"
+        android:name="com.example.counterdatabase.ui.stickers.StickersFragment"
+        android:label="@string/menu_stickers"
+        tools:layout="@layout/fragment_stickers" />
+
+    <fragment
+        android:id="@+id/nav_crates"
+        android:name="com.example.counterdatabase.ui.crates.CratesFragment"
+        android:label="@string/menu_crates"
+        tools:layout="@layout/fragment_crates" />
+
+    <fragment
+        android:id="@+id/nav_agents"
+        android:name="com.example.counterdatabase.ui.agents.AgentsFragment"
+        android:label="@string/menu_agents"
+        tools:layout="@layout/fragment_agents" />
+
+    <fragment
+        android:id="@+id/nav_highlights"
+        android:name="com.example.counterdatabase.ui.highlights.HighlightsFragment"
+        android:label="@string/menu_highlights"
+        tools:layout="@layout/fragment_highlights" />
+
+</navigation>

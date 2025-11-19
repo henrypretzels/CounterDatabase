@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_skins"
+            android:icon="@drawable/ic_skins"
+            android:title="@string/menu_skins" />
+        <item
+            android:id="@+id/nav_stickers"
+            android:icon="@drawable/ic_stickers"
+            android:title="@string/menu_stickers" />
+        <item
+            android:id="@+id/nav_crates"
+            android:icon="@drawable/ic_crates"
+            android:title="@string/menu_crates" />
+        <item
+            android:id="@+id/nav_agents"
+            android:icon="@drawable/ic_agents"
+            android:title="@string/menu_agents" />
+        <item
+            android:id="@+id/nav_highlights"
+            android:icon="@drawable/ic_highlights"
+            android:title="@string/menu_highlights" />
+    </group>
+</menu>

@@ -21,7 +21,7 @@ class ContainedItemAdapter : ListAdapter<ContainedItem, ContainedItemAdapter.Con
         holder.bind(item)
     }
 
-    class ContainedItemViewHolder(private val binding: ContainedItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ContainedItemViewHolder(private val binding: ContainedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ContainedItem) {
             binding.itemName.text = item.name
             Glide.with(binding.root.context)
@@ -29,14 +29,14 @@ class ContainedItemAdapter : ListAdapter<ContainedItem, ContainedItemAdapter.Con
                 .into(binding.itemImage)
         }
     }
+}
 
-    class ContainedItemDiffCallback : DiffUtil.ItemCallback<ContainedItem>() {
-        override fun areItemsTheSame(oldItem: ContainedItem, newItem: ContainedItem): Boolean {
-            return oldItem.id == newItem.id
-        }
+class ContainedItemDiffCallback : DiffUtil.ItemCallback<ContainedItem>() {
+    override fun areItemsTheSame(oldItem: ContainedItem, newItem: ContainedItem): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-        override fun areContentsTheSame(oldItem: ContainedItem, newItem: ContainedItem): Boolean {
-            return oldItem == newItem
-        }
+    override fun areContentsTheSame(oldItem: ContainedItem, newItem: ContainedItem): Boolean {
+        return oldItem == newItem
     }
 }

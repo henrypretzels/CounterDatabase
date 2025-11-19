@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_home">Home</string>
+    <string name="menu_skins">Skins</string>
+    <string name="menu_stickers">Stickers</string>
+    <string name="menu_crates">Crates</string>
+    <string name="menu_agents">Agents</string>
+    <string name="menu_highlights">Highlights</string>
+    <string name="nav_header_desc">Navigation header</string>
+</resources>

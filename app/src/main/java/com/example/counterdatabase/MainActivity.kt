@@ -1,58 +1,51 @@
 package com.example.counterdatabase
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.counterdatabase.ui.agents.AgentsActivity
-import com.example.counterdatabase.ui.crates.CratesActivity
-import com.example.counterdatabase.ui.highlights.HighlightsActivity
-import com.example.counterdatabase.ui.skins.SkinsActivity
-import com.example.counterdatabase.ui.stickers.StickersActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.example.counterdatabase.databinding.ActivityMainBinding
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
-        val skinsButton = findViewById<ImageButton>(R.id.skins_button)
-        skinsButton.setOnClickListener {
-            val intent = Intent(this, SkinsActivity::class.java)
-            startActivity(intent)
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val cratesButton = findViewById<ImageButton>(R.id.crates_button)
-        cratesButton.setOnClickListener {
-            val intent = Intent(this, CratesActivity::class.java)
-            startActivity(intent)
-        }
+        setSupportActionBar(binding.toolbar)
 
-        val stickersButton = findViewById<ImageButton>(R.id.stickers_button)
-        stickersButton.setOnClickListener {
-            val intent = Intent(this, StickersActivity::class.java)
-            startActivity(intent)
-        }
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
 
-        val agentsButton = findViewById<ImageButton>(R.id.agents_button)
-        agentsButton.setOnClickListener {
-            val intent = Intent(this, AgentsActivity::class.java)
-            startActivity(intent)
-        }
+        // More robust way to get the NavController
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        val highlightsButton = findViewById<ImageButton>(R.id.highlights_button)
-        highlightsButton.setOnClickListener {
-            val intent = Intent(this, HighlightsActivity::class.java)
-            startActivity(intent)
-        }
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home, R.id.nav_skins, R.id.nav_stickers,
+                R.id.nav_crates, R.id.nav_agents, R.id.nav_highlights
+            ), drawerLayout
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

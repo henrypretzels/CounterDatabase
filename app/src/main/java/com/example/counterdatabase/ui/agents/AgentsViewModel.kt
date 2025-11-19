@@ -21,7 +21,7 @@ class AgentsViewModel : ViewModel() {
         getAgents()
     }
 
-    private fun getAgents() {
+    fun getAgents() {
         viewModelScope.launch {
             val result = repository.getAgents()
             allAgents = result

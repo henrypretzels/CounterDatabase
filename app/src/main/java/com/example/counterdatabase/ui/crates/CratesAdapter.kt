@@ -19,15 +19,17 @@ class CratesAdapter : ListAdapter<Crate, CratesAdapter.CrateViewHolder>(CrateDif
 
     override fun onBindViewHolder(holder: CrateViewHolder, position: Int) {
         val crate = getItem(position)
-        holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, CrateDetailsActivity::class.java)
-            intent.putExtra("crate", crate)
-            holder.itemView.context.startActivity(intent)
-        }
         holder.bind(crate)
+        holder.itemView.setOnClickListener {
+            val context = it.context
+            val intent = Intent(context, CrateDetailsActivity::class.java).apply {
+                putExtra("crate", crate)
+            }
+            context.startActivity(intent)
+        }
     }
 
-    class CrateViewHolder(private val binding: CrateItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CrateViewHolder(private val binding: CrateItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(crate: Crate) {
             binding.crateName.text = crate.name
             Glide.with(binding.root.context)
@@ -35,14 +37,14 @@ class CratesAdapter : ListAdapter<Crate, CratesAdapter.CrateViewHolder>(CrateDif
                 .into(binding.crateImage)
         }
     }
+}
 
-    class CrateDiffCallback : DiffUtil.ItemCallback<Crate>() {
-        override fun areItemsTheSame(oldItem: Crate, newItem: Crate): Boolean {
-            return oldItem.id == newItem.id
-        }
+class CrateDiffCallback : DiffUtil.ItemCallback<Crate>() {
+    override fun areItemsTheSame(oldItem: Crate, newItem: Crate): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-        override fun areContentsTheSame(oldItem: Crate, newItem: Crate): Boolean {
-            return oldItem == newItem
-        }
+    override fun areContentsTheSame(oldItem: Crate, newItem: Crate): Boolean {
+        return oldItem == newItem
     }
 }

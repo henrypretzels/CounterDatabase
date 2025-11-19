@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.CounterDatabase" parent="Base.Theme.CounterDatabase" />
+
+    <style name="Theme.CounterDatabase.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.CounterDatabase.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

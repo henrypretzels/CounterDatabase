@@ -19,15 +19,17 @@ class HighlightsAdapter : ListAdapter<Highlight, HighlightsAdapter.HighlightView
 
     override fun onBindViewHolder(holder: HighlightViewHolder, position: Int) {
         val highlight = getItem(position)
-        holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, HighlightDetailsActivity::class.java)
-            intent.putExtra("highlight", highlight)
-            holder.itemView.context.startActivity(intent)
-        }
         holder.bind(highlight)
+        holder.itemView.setOnClickListener {
+            val context = it.context
+            val intent = Intent(context, HighlightDetailsActivity::class.java).apply {
+                putExtra("highlight", highlight)
+            }
+            context.startActivity(intent)
+        }
     }
 
-    class HighlightViewHolder(private val binding: HighlightItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class HighlightViewHolder(private val binding: HighlightItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(highlight: Highlight) {
             binding.highlightName.text = highlight.name
             Glide.with(binding.root.context)
@@ -35,14 +37,14 @@ class HighlightsAdapter : ListAdapter<Highlight, HighlightsAdapter.HighlightView
                 .into(binding.highlightImage)
         }
     }
+}
 
-    class HighlightDiffCallback : DiffUtil.ItemCallback<Highlight>() {
-        override fun areItemsTheSame(oldItem: Highlight, newItem: Highlight): Boolean {
-            return oldItem.id == newItem.id
-        }
+class HighlightDiffCallback : DiffUtil.ItemCallback<Highlight>() {
+    override fun areItemsTheSame(oldItem: Highlight, newItem: Highlight): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-        override fun areContentsTheSame(oldItem: Highlight, newItem: Highlight): Boolean {
-            return oldItem == newItem
-        }
+    override fun areContentsTheSame(oldItem: Highlight, newItem: Highlight): Boolean {
+        return oldItem == newItem
     }
 }

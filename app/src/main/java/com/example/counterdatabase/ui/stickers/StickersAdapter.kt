@@ -20,35 +20,45 @@ class StickersAdapter : ListAdapter<Sticker, StickersAdapter.StickerViewHolder>(
 
     override fun onBindViewHolder(holder: StickerViewHolder, position: Int) {
         val sticker = getItem(position)
-        holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, StickerDetailsActivity::class.java)
-            intent.putExtra("sticker", sticker)
-            holder.itemView.context.startActivity(intent)
-        }
         holder.bind(sticker)
+        holder.itemView.setOnClickListener {
+            val context = it.context
+            val intent = Intent(context, StickerDetailsActivity::class.java).apply {
+                putExtra("sticker", sticker)
+            }
+            context.startActivity(intent)
+        }
     }
 
-    class StickerViewHolder(private val binding: StickerItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class StickerViewHolder(private val binding: StickerItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(sticker: Sticker) {
             binding.stickerName.text = sticker.name
-            binding.stickerRarity.text = sticker.rarity?.name ?: ""
-            sticker.rarity?.color?.let {
-                binding.stickerRarity.setTextColor(Color.parseColor(it))
+            binding.stickerType.text = sticker.type
+
+            sticker.rarity?.let {
+                binding.stickerRarity.text = it.name
+                try {
+                    binding.stickerRarity.setTextColor(Color.parseColor(it.color))
+                } catch (e: IllegalArgumentException) {
+                    // In case the color string is invalid
+                }
+            } ?: run {
+                binding.stickerRarity.text = ""
             }
-            binding.stickerType.text = sticker.type ?: ""
+
             Glide.with(binding.root.context)
                 .load(sticker.image)
                 .into(binding.stickerImage)
         }
     }
+}
 
-    class StickerDiffCallback : DiffUtil.ItemCallback<Sticker>() {
-        override fun areItemsTheSame(oldItem: Sticker, newItem: Sticker): Boolean {
-            return oldItem.id == newItem.id
-        }
+class StickerDiffCallback : DiffUtil.ItemCallback<Sticker>() {
+    override fun areItemsTheSame(oldItem: Sticker, newItem: Sticker): Boolean {
+        return oldItem.id == newItem.id
+    }
 
-        override fun areContentsTheSame(oldItem: Sticker, newItem: Sticker): Boolean {
-            return oldItem == newItem
-        }
+    override fun areContentsTheSame(oldItem: Sticker, newItem: Sticker): Boolean {
+        return oldItem == newItem
     }
 }
