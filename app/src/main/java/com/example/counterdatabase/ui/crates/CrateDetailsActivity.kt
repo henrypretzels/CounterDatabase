@@ -17,21 +17,41 @@ class CrateDetailsActivity : AppCompatActivity() {
         binding = ActivityCrateDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val crate = intent.getParcelableExtra<Crate>("crate")
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        val crate = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("crate", Crate::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<Crate>("crate")
+        }
 
         crate?.let {
             binding.crateName.text = it.name
-            Glide.with(this).load(it.image).into(binding.crateImage)
+            
+            if (!it.type.isNullOrEmpty()) {
+                binding.crateType.text = it.type
+                binding.crateType.visibility = View.VISIBLE
+            } else {
+                binding.crateType.visibility = View.GONE
+            }
+
+            Glide.with(this)
+                .load(it.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .into(binding.crateImage)
 
             if (it.description.isNullOrEmpty()) {
-                binding.crateDescription.visibility = View.GONE
+                binding.descriptionCard.visibility = View.GONE
             } else {
                 binding.crateDescription.text = it.description
             }
 
             if (it.contains.isNullOrEmpty()) {
-                binding.containsTitle.visibility = View.GONE
-                binding.containsRecyclerView.visibility = View.GONE
+                binding.containsCard.visibility = View.GONE
             } else {
                 binding.containsRecyclerView.layoutManager = LinearLayoutManager(this)
                 val containsAdapter = ContainedItemAdapter()
@@ -40,8 +60,7 @@ class CrateDetailsActivity : AppCompatActivity() {
             }
 
             if (it.contains_rare.isNullOrEmpty()) {
-                binding.containsRareTitle.visibility = View.GONE
-                binding.containsRareRecyclerView.visibility = View.GONE
+                binding.containsRareCard.visibility = View.GONE
             } else {
                 binding.containsRareRecyclerView.layoutManager = LinearLayoutManager(this)
                 val containsRareAdapter = ContainedItemAdapter()
@@ -49,5 +68,10 @@ class CrateDetailsActivity : AppCompatActivity() {
                 containsRareAdapter.submitList(it.contains_rare)
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

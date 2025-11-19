@@ -14,15 +14,39 @@ class HighlightsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        try {
+            com.example.counterdatabase.data.RetrofitInstance.initialize(this)
+        } catch (e: Exception) {
+            android.util.Log.w("HighlightsActivity", "Retrofit already initialized or error", e)
+        }
+        
         binding = ActivityHighlightsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = getString(com.example.counterdatabase.R.string.highlights)
+
         val adapter = HighlightsAdapter()
+        binding.highlightsRecyclerView.setHasFixedSize(false)
         binding.highlightsRecyclerView.adapter = adapter
         binding.highlightsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         highlightsViewModel.highlights.observe(this) { highlights ->
-            adapter.submitList(highlights)
+            android.util.Log.d("HighlightsActivity", "Highlights received: ${highlights.size}")
+            binding.progressBar.visibility = android.view.View.GONE
+            
+            if (highlights.isEmpty()) {
+                binding.emptyStateText.visibility = android.view.View.VISIBLE
+                binding.emptyStateText.text = "Nenhum highlight encontrado"
+                binding.highlightsRecyclerView.visibility = android.view.View.INVISIBLE
+            } else {
+                binding.emptyStateText.visibility = android.view.View.GONE
+                binding.highlightsRecyclerView.visibility = android.view.View.VISIBLE
+                adapter.submitList(highlights)
+            }
         }
 
         binding.highlightsSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -38,5 +62,10 @@ class HighlightsActivity : AppCompatActivity() {
         })
 
         highlightsViewModel.getHighlights()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

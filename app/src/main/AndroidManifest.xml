@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".CounterDatabaseApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,7 +13,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CounterDatabase">
+        android:theme="@style/Theme.CounterDatabase"
+        android:hardwareAccelerated="true"
+        android:largeHeap="false">
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -49,6 +52,12 @@
             android:exported="false" />
         <activity
             android:name=".ui.crates.CrateDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.agents.AgentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.agents.AgentDetailsActivity"
             android:exported="false" />
     </application>
 

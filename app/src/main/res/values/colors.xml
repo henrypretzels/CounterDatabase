@@ -1,8 +1,15 @@
 <resources>
-    <color name="primary">#00695C</color>
+    <color name="csgoBackground">#050816</color>
+    <color name="csgoSurface">#111827</color>
+    <color name="csgoSurfaceLight">#1F2937</color>
+    <color name="csgoAccent">#FF9800</color>
+    <color name="csgoAccentSecondary">#00BCD4</color>
+    <color name="csgoOverlay">#80000000</color>
+    <color name="primary">#FF9800</color>
     <color name="onPrimary">#FFFFFF</color>
-    <color name="background">#FAFAFA</color>
-    <color name="cardStroke">#E0E0E0</color>
-    <color name="textPrimary">#212121</color>
-    <color name="textSecondary">#757575</color>
+    <color name="background">#050816</color>
+    <color name="cardStroke">#374151</color>
+    <color name="textPrimary">#FFFFFF</color>
+    <color name="textSecondary">#9CA3AF</color>
+    <color name="cardBackground">#111827</color>
 </resources>

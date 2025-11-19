@@ -32,6 +32,11 @@ class HighlightsAdapter : ListAdapter<Highlight, HighlightsAdapter.HighlightView
             binding.highlightName.text = highlight.name
             Glide.with(binding.root.context)
                 .load(highlight.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .placeholder(android.R.color.darker_gray)
+                .error(android.R.color.darker_gray)
                 .into(binding.highlightImage)
         }
     }

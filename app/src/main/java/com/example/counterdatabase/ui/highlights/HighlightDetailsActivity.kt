@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.bumptech.glide.Glide
 import com.example.counterdatabase.data.Highlight
 import com.example.counterdatabase.databinding.ActivityHighlightDetailsBinding
 
@@ -28,44 +29,56 @@ class HighlightDetailsActivity : AppCompatActivity() {
         binding = ActivityHighlightDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val highlight = intent.getParcelableExtra<Highlight>("highlight")
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        val highlight = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("highlight", Highlight::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<Highlight>("highlight")
+        }
 
         highlight?.let {
             binding.highlightName.text = it.name
 
             if (it.description.isNullOrEmpty()) {
-                binding.highlightDescription.visibility = View.GONE
+                binding.descriptionCard.visibility = View.GONE
             } else {
                 binding.highlightDescription.text = it.description
             }
 
-            if (it.tournament_event.isNullOrEmpty()) {
-                binding.highlightTournament.visibility = View.GONE
+            if (!it.tournament_event.isNullOrEmpty()) {
+                binding.tournamentContainer.visibility = View.VISIBLE
+                binding.highlightTournament.text = it.tournament_event
             } else {
-                binding.highlightTournament.text = "Tournament: ${it.tournament_event}"
+                binding.tournamentContainer.visibility = View.GONE
             }
 
-            if (it.team0.isNullOrEmpty() || it.team1.isNullOrEmpty()) {
-                binding.highlightTeams.visibility = View.GONE
+            if (!it.team0.isNullOrEmpty() && !it.team1.isNullOrEmpty()) {
+                binding.teamsContainer.visibility = View.VISIBLE
+                binding.highlightTeams.text = "${it.team0} vs ${it.team1}"
             } else {
-                binding.highlightTeams.text = "Teams: ${it.team0} vs ${it.team1}"
+                binding.teamsContainer.visibility = View.GONE
             }
 
-            if (it.stage.isNullOrEmpty()) {
-                binding.highlightStage.visibility = View.GONE
+            if (!it.stage.isNullOrEmpty()) {
+                binding.stageContainer.visibility = View.VISIBLE
+                binding.highlightStage.text = it.stage
             } else {
-                binding.highlightStage.text = "Stage: ${it.stage}"
+                binding.stageContainer.visibility = View.GONE
             }
 
-            if (it.map.isNullOrEmpty()) {
-                binding.highlightMap.visibility = View.GONE
+            if (!it.map.isNullOrEmpty()) {
+                binding.mapContainer.visibility = View.VISIBLE
+                binding.highlightMap.text = it.map
             } else {
-                binding.highlightMap.text = "Map: ${it.map}"
+                binding.mapContainer.visibility = View.GONE
             }
 
             if (it.video.isNullOrEmpty()) {
-                binding.playerView.visibility = View.GONE
-                binding.fullscreenButton.visibility = View.GONE
+                binding.videoContainer.visibility = View.GONE
             } else {
                 videoUrl = it.video
             }
@@ -118,5 +131,10 @@ class HighlightDetailsActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         releasePlayer()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

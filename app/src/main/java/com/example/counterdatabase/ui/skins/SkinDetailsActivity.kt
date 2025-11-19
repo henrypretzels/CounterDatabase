@@ -18,14 +18,29 @@ class SkinDetailsActivity : AppCompatActivity() {
         binding = ActivitySkinDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val skin = intent.getParcelableExtra<Skin>("skin")
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        val skin = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("skin", Skin::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<Skin>("skin")
+        }
 
         skin?.let {
-            Glide.with(this).load(it.image).into(binding.skinImage)
+            Glide.with(this)
+                .load(it.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .into(binding.skinImage)
+            
             binding.skinName.text = it.name
+            binding.skinWeapon.text = it.weapon.name
 
             if (it.description.isNullOrEmpty()) {
-                binding.skinDescription.visibility = View.GONE
+                binding.descriptionCard.visibility = View.GONE
             } else {
                 val unescapedDescription = it.description.replace("\\n", "<br>").replace("\\\"", "\"")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -36,10 +51,21 @@ class SkinDetailsActivity : AppCompatActivity() {
                 }
             }
 
-            binding.skinWeapon.text = "Weapon: ${it.weapon.name}"
-            binding.skinRarity.text = "Rarity: ${it.rarity.name}"
-            binding.skinMinFloat.text = "Min Float: ${it.min_float}"
-            binding.skinMaxFloat.text = "Max Float: ${it.max_float}"
+            binding.skinRarity.text = it.rarity.name
+            binding.skinRarity.setTextColor(android.graphics.Color.parseColor(it.rarity.color))
+            binding.skinMinFloat.text = it.min_float.toString()
+            binding.skinMaxFloat.text = it.max_float.toString()
+
+            if (it.stattrak) {
+                binding.stattrakContainer.visibility = View.VISIBLE
+            } else {
+                binding.stattrakContainer.visibility = View.GONE
+            }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

@@ -31,10 +31,27 @@ class SkinsAdapter : ListAdapter<Skin, SkinsAdapter.SkinViewHolder>(SkinDiffCall
     class SkinViewHolder(private val binding: SkinItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(skin: Skin) {
             binding.skinName.text = skin.name
+            binding.skinWeapon.text = skin.weapon.name
             binding.skinRarity.text = skin.rarity.name
             binding.skinRarity.setTextColor(Color.parseColor(skin.rarity.color))
+            
+            val floatText = "Float: ${skin.min_float} - ${skin.max_float}"
+            binding.skinFloat.text = floatText
+            
+            if (skin.stattrak) {
+                binding.skinStattrak.visibility = android.view.View.VISIBLE
+                binding.skinStattrak.text = "StatTrak™"
+            } else {
+                binding.skinStattrak.visibility = android.view.View.GONE
+            }
+            
             Glide.with(binding.root.context)
                 .load(skin.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
+                .placeholder(android.R.color.darker_gray)
+                .error(android.R.color.darker_gray)
                 .into(binding.skinImage)
         }
     }

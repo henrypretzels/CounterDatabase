@@ -19,60 +19,94 @@ class StickerDetailsActivity : AppCompatActivity() {
         binding = ActivityStickerDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sticker = intent.getParcelableExtra<Sticker>("sticker")
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        val sticker = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("sticker", Sticker::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<Sticker>("sticker")
+        }
 
         sticker?.let {
-            Glide.with(this).load(it.image).into(binding.stickerImage)
             binding.stickerName.text = it.name
 
-            if (it.description.isNullOrEmpty()) {
-                binding.stickerDescription.visibility = View.GONE
+            if (!it.type.isNullOrEmpty()) {
+                binding.stickerType.text = it.type
+                binding.stickerType.visibility = View.VISIBLE
             } else {
+                binding.stickerType.visibility = View.GONE
+            }
+
+            Glide.with(this)
+                .load(it.image)
+                .centerCrop()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .into(binding.stickerImage)
+
+            if (it.description.isNullOrEmpty()) {
+                binding.descriptionCard.visibility = View.GONE
+            } else {
+                val unescapedDescription = it.description.replace("\\n", "<br>").replace("\\\"", "\"")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    binding.stickerDescription.text = Html.fromHtml(it.description, Html.FROM_HTML_MODE_COMPACT)
+                    binding.stickerDescription.text = Html.fromHtml(unescapedDescription, Html.FROM_HTML_MODE_COMPACT)
                 } else {
-                    binding.stickerDescription.text = Html.fromHtml(it.description)
+                    @Suppress("DEPRECATION")
+                    binding.stickerDescription.text = Html.fromHtml(unescapedDescription)
                 }
             }
 
-            if (it.rarity?.name.isNullOrEmpty()) {
-                binding.stickerRarity.visibility = View.GONE
-            } else {
-                binding.stickerRarity.text = "Rarity: ${it.rarity?.name}"
-                it.rarity?.color?.let { color ->
+            if (it.rarity != null) {
+                binding.rarityContainer.visibility = View.VISIBLE
+                binding.stickerRarity.text = it.rarity.name
+                it.rarity.color?.let { color ->
                     binding.stickerRarity.setTextColor(Color.parseColor(color))
                 }
+            } else {
+                binding.rarityContainer.visibility = View.GONE
             }
 
-            if (it.type.isNullOrEmpty()) {
-                binding.stickerType.visibility = View.GONE
+            if (!it.type.isNullOrEmpty()) {
+                binding.typeContainer.visibility = View.VISIBLE
+                binding.stickerTypeDetail.text = it.type
             } else {
-                binding.stickerType.text = "Type: ${it.type}"
+                binding.typeContainer.visibility = View.GONE
             }
 
-            if (it.effect.isNullOrEmpty()) {
-                binding.stickerEffect.visibility = View.GONE
+            if (!it.effect.isNullOrEmpty()) {
+                binding.effectContainer.visibility = View.VISIBLE
+                binding.stickerEffect.text = it.effect
             } else {
-                binding.stickerEffect.text = "Effect: ${it.effect}"
+                binding.effectContainer.visibility = View.GONE
             }
 
-            if (it.tournament_event.isNullOrEmpty()) {
-                binding.stickerTournamentEvent.visibility = View.GONE
+            if (!it.tournament_event.isNullOrEmpty()) {
+                binding.tournamentContainer.visibility = View.VISIBLE
+                binding.stickerTournamentEvent.text = it.tournament_event
             } else {
-                binding.stickerTournamentEvent.text = "Tournament: ${it.tournament_event}"
+                binding.tournamentContainer.visibility = View.GONE
             }
 
-            if (it.tournament_team.isNullOrEmpty()) {
-                binding.stickerTournamentTeam.visibility = View.GONE
+            if (!it.tournament_team.isNullOrEmpty()) {
+                binding.teamContainer.visibility = View.VISIBLE
+                binding.stickerTournamentTeam.text = it.tournament_team
             } else {
-                binding.stickerTournamentTeam.text = "Team: ${it.tournament_team}"
+                binding.teamContainer.visibility = View.GONE
             }
 
-            if (it.market_hash_name.isNullOrEmpty()) {
-                binding.stickerMarketHashName.visibility = View.GONE
+            if (!it.market_hash_name.isNullOrEmpty()) {
+                binding.marketContainer.visibility = View.VISIBLE
+                binding.stickerMarketHashName.text = it.market_hash_name
             } else {
-                binding.stickerMarketHashName.text = "Market Name: ${it.market_hash_name}"
+                binding.marketContainer.visibility = View.GONE
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

@@ -14,4 +14,7 @@ interface ApiService {
 
     @GET("crates.json")
     suspend fun getCrates(): List<Crate>
+    
+    @GET("agents.json")
+    suspend fun getAgents(): List<Agent>
 }
