@@ -2,7 +2,7 @@
 
 Aplicativo Android desenvolvido em Kotlin que serve como hub de informações sobre itens do Counter-Strike: Global Offensive (CS:GO) e Counter-Strike 2 (CS2).
 
-![CounterDatabase Demo](docs/assets/1119.gif)
+<img src="docs/assets/1119.gif" alt="CounterDatabase Demo" width="375"/>
 
 ## O que o app faz
 
